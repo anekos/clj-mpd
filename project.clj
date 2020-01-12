@@ -10,7 +10,8 @@
                  [org.clojure/data.json "0.2.7"]
                  [cheshire "5.9.0"]
                  ; [clj-telnet "0.6.0"] using `lib`
-                 [commons-net/commons-net "3.5"]]
+                 [commons-net/commons-net "3.5"]
+                 [net.snca/kunekune "0.1.6"]]
   :source-paths ["src" "clj-telnet/src"]
   :profiles {:dev
              {:dependencies [[org.clojure/tools.namespace "0.3.1"]]

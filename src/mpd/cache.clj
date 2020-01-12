@@ -18,10 +18,11 @@
     (let [cache (-> *cache-file* slurp (chs/parse-string keyword))]
       (cl-format *err*
                  "Total duration: ~:D sec~%"
-                 (Math/ceil (reduce +
-                                    (map
-                                      (comp read-string :duration)
-                                      (filter :duration cache)))))
+                 (->> cache
+                      (filter :duration)
+                      (map (comp read-string :duration))
+                      (reduce +)
+                      Math/ceil))
       cache)))
 
 (defn update-cache []
