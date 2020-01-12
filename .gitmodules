@@ -1,0 +1,3 @@
+[submodule "clj-telnet"]
+	path = clj-telnet
+	url = git@github.com:anekos/clj-telnet.git
