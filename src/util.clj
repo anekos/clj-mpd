@@ -23,6 +23,3 @@
 (defn vector-or-nil [item]
   (when item
     (vector item)))
-
-
-

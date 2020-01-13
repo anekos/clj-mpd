@@ -18,7 +18,7 @@
     (let [cache (-> *cache-file* slurp (chs/parse-string keyword))
           cache (filter :duration cache)]
       (cl-format *err*
-                 "Total duration: ~:D sec~%"
+                 "? Library duration: ~:D sec~%"
                  (->> cache
                       (map :duration)
                       (reduce +)

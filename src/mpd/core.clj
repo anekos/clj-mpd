@@ -13,18 +13,20 @@
     (cache/update-cache)))
 
 (defn command-timer [{duration :duration print-only :print}]
- (cl-format *err* "Setup timer playlist for ~A seconds~%" duration)
- (let [cache (cache/read-cache)
-       t (timer/make cache)
-       pl (timer/smart-search t duration)]
-   ; TODO
-   (if print-only
-     (doseq [{path :path} pl]
-       (println path))
-     (client/with-mpd
-       (cmd/clear)
-       (doseq [{path :path} pl]
-         (cmd/add path))))))
+  (cl-format *err* "! Setup timer playlist for ~A seconds~%" duration)
+  (let [cache (cache/read-cache)
+        t (timer/make cache)
+        pl (timer/smart-search t duration)]
+    (if print-only
+      (doseq [{path :path} pl]
+        (println path))
+      (client/with-mpd
+        (cmd/clear)
+        (doseq [{path :path} pl]
+          (println path)
+          (cmd/add path))
+        (cmd/play)))
+    nil))
 
 
 

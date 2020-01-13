@@ -46,8 +46,11 @@
       (sort-by :duration)))
 
 
+(defn add [uri]
+  (client/command "add" uri))
+
 (defn clear []
   (client/command "clear"))
 
-(defn add [uri]
-  (client/command "add" uri))
+(defn play []
+  (client/command "play"))

@@ -1,5 +1,6 @@
 (ns mpd.client
-  (:require [clojure.string :as str]
+  (:require [clojure.pprint :refer [cl-format]]
+            [clojure.string :as str]
             [clj-telnet.core :as telnet]))
 
 
@@ -27,11 +28,13 @@
 
 (defn connect []
   (binding [*conn* (telnet/get-telnet "localhost" 6600)]
+    (cl-format *err* "? Connecting~%")
     (read-banner)
+    (cl-format *err* "? Connected~%")
     *conn*))
 
 (defn read-response []
-  (let [r (telnet/read-until-or *conn* [#"\nOK\n" #"\nACK .*\n"])
+  (let [r (telnet/read-until-or *conn* [#"OK\n" #"ACK .*\n"])
         r (str/split r #"\n")]
     (take (- (count r) 1)
           r)))
