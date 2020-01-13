@@ -23,14 +23,18 @@
         r (parse-lsinfo s)]
     r))
 
-(defn walk [path]
+(defn- walk- [path]
   (cl-format *err* "walk in: ~A~%" path)
   (let [entries (lsinfo path)
-        files (filter #(= (:type %) "file") entries)
+        files (filter #(and :duration (= (:type %) "file")) entries)
         dirs (->> entries
                   (filter #(= (:type %) "directory"))
                   (map :path))
         children (apply concat
-                        (map walk dirs))]
+                        (map walk- dirs))]
     (concat files children)))
 
+(defn walk [path]
+  (->> path
+      walk-
+      (sort-by :duration)))
