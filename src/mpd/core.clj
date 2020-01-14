@@ -3,6 +3,7 @@
   (:require [clojure.pprint :refer [cl-format]]
             [cli-matic.core :refer [run-cmd]]
             [mpd.client :as client]
+            [mpd.client.command :as cmd]
             [mpd.timer :as timer]
             [mpd.cache :as cache]))
 
@@ -20,7 +21,10 @@
    (if print-only
      (doseq [{path :path} pl]
        (println path))
-     (println "NOT IMPLEMENTED"))))
+     (client/with-mpd
+       (cmd/clear)
+       (doseq [{path :path} pl]
+         (cmd/add path))))))
 
 
 
