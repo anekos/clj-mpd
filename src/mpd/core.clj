@@ -1,7 +1,47 @@
 (ns mpd.core
-  (:require [clj-telnet.core :as telnet]))
+  (:gen-class)
+  (:require [clojure.pprint :refer [cl-format]]
+            [cli-matic.core :refer [run-cmd]]
+            [mpd.client :as client]
+            [mpd.timer :as timer]
+            [mpd.cache :as cache]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+
+(defn command-update [{}]
+  (client/with-mpd
+    (cache/update-cache)))
+
+(defn command-timer [{duration :duration print-only :print}]
+ (cl-format *err* "Setup timer playlist for ~A seconds~%" duration)
+ (let [cache (cache/read-cache)
+       t (timer/make cache)
+       pl (timer/smart-search t duration)]
+   ; TODO
+   (if print-only
+     (doseq [{path :path} pl]
+       (println path))
+     (println "NOT IMPLEMENTED"))))
+
+
+
+(def cli-options
+  {:app {:command     "mpd-timer"
+         :description "Setup playlist for timer"
+         :version     "0.0.1"}
+   :global-opts [{:option  "port"
+                  :short   "p"
+                  :as      "MPD port"
+                  :type    :int
+                  :default 6600}]
+   :commands    [{:command     "update"
+                  :description "Update cache"
+                  :runs        command-update}
+                 {:command     "timer"
+                  :description "Setup playlist for timer"
+                  :opts        [{:short 0 :option "duration" :as "Duration in seconds" :type :int}
+                                {:short "p" :option "print" :as "Print path only" :type :with-flag :default false}]
+                  :runs        command-timer}]})
+
+(defn -main
+  [& args]
+  (run-cmd args cli-options))
