@@ -44,3 +44,10 @@
   (->> path
       walk-
       (sort-by :duration)))
+
+
+(defn clear []
+  (client/command "clear"))
+
+(defn add [uri]
+  (client/command "add" uri))
