@@ -1,9 +1,6 @@
 (ns mpd.client
-  (:require [clojure.tools.namespace.repl :refer [refresh]]
-            [clojure.repl :refer :all]
-            [clojure.string :as str]
-            [clj-telnet.core :as telnet]
-            [clojure.pprint :refer [pp pprint cl-format]]))
+  (:require [clojure.string :as str]
+            [clj-telnet.core :as telnet]))
 
 
 

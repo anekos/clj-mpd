@@ -20,6 +20,3 @@
               :repl-options {:init-ns user}}
              :uberjar
              {:aot :all}})
-
-
-
