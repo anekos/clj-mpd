@@ -18,7 +18,7 @@
   :main mpd.core
   :profiles {:dev
              {:dependencies [[org.clojure/tools.namespace "0.3.1"]]
-              :source-paths ["src" "clj-telnet/src" "dev"]
+              :source-paths ["src" "test" "clj-telnet/src" "dev"]
               :aot []
               :repl-options {:init-ns user}}
              :uberjar
