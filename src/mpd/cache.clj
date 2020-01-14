@@ -15,11 +15,11 @@
 
 (defn read-cache []
   (when (.exists *cache-file*)
-    (let [cache (-> *cache-file* slurp (chs/parse-string keyword))]
+    (let [cache (-> *cache-file* slurp (chs/parse-string keyword))
+          cache (filter :duration cache)]
       (cl-format *err*
                  "Total duration: ~:D sec~%"
                  (->> cache
-                      (filter :duration)
                       (map :duration)
                       (reduce +)
                       Math/ceil))
