@@ -5,6 +5,11 @@
 
 
 
+(defn- read-value [k v]
+  (condp = k
+    "duration" read-string
+    identity))
+
 (defn- parse-lsinfo [lines]
   (loop [result [] item {} [head & tail] lines]
     (if head
@@ -13,7 +18,7 @@
           (if (empty? item)
             (recur result {:type k :path v} tail)
             (recur (conj result item) {:type k :path v} tail))
-          (recur result (assoc item (keyword k) v) tail)))
+          (recur result (assoc item (keyword k) (read-value k v)) tail)))
       (if (empty? item)
         result
         (conj result item)))))

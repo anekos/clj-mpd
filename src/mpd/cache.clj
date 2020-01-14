@@ -20,7 +20,7 @@
                  "Total duration: ~:D sec~%"
                  (->> cache
                       (filter :duration)
-                      (map (comp read-string :duration))
+                      (map :duration)
                       (reduce +)
                       Math/ceil))
       cache)))
