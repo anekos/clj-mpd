@@ -6,9 +6,10 @@
 
 
 (defn- read-value [k v]
-  (condp = k
+  ((condp = k
     "duration" read-string
-    identity))
+    identity)
+   v))
 
 (defn- parse-lsinfo [lines]
   (loop [result [] item {} [head & tail] lines]
