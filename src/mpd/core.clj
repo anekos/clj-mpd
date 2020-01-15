@@ -10,11 +10,11 @@
             [mpd.util :as util]))
 
 
-(defn command-update [{}]
-  (client/with-mpd
+(defn command-update [{host :host port :port}]
+  (client/with-mpd host port
     (cache/update-cache)))
 
-(defn command-set [{duration :duration print-only :print}]
+(defn command-set [{duration :duration print-only :print host :host port :port}]
   (let [duration (tf/decode duration)]
     (cl-format *err* "! Setup timer playlist for ~A~%" (tf/encode duration))
     (let [cache (cache/read-cache)
@@ -27,7 +27,7 @@
       (if print-only
         (doseq [{path :path} pl]
           (println path))
-        (client/with-mpd
+        (client/with-mpd host port
           (cmd/clear)
           (doseq [{path :path} pl]
             (println path)
@@ -45,11 +45,18 @@
                   :short   "p"
                   :as      "MPD port"
                   :type    :int
-                  :default 6600}]
+                  :default 6600}
+                 {:option  "host"
+                  :short   "h"
+                  :as      "MPD host"
+                  :type    :string
+                  :default "localhost"}]
    :commands    [{:command     "update"
+                  :short       "u"
                   :description "Update cache"
                   :runs        command-update}
                  {:command     "set"
+                  :short       "s"
                   :description "Setup playlist for timer"
                   :opts        [{:short 0 :option "duration" :as "Duration in seconds" :type :string}
                                 {:short "p" :option "print" :as "Print path only" :type :with-flag :default false}]

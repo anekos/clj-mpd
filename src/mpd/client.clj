@@ -22,12 +22,12 @@
 (defn read-banner []
   (telnet/read-until-or *conn* [#"OK.*\n"]))
 
-(defmacro with-mpd [& body]
-  `(binding [*conn* (connect)]
+(defmacro with-mpd [host port & body]
+  `(binding [*conn* (connect ~host ~port)]
      ~@body))
 
-(defn connect []
-  (binding [*conn* (telnet/get-telnet "localhost" 6600)]
+(defn connect [host port]
+  (binding [*conn* (telnet/get-telnet host port)]
     (cl-format *err* "? Connecting~%")
     (read-banner)
     (cl-format *err* "? Connected~%")
