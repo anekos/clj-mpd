@@ -3,13 +3,15 @@
   :url "http://example.com/FIXME"
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
             :url "https://www.eclipse.org/legal/epl-2.0/"}
+  :plugins [[lein-cloverage "1.0.13"]
+            [lein-ancient "0.6.15"]]
   :dependencies [[cheshire "5.9.0"]
                  [cli-matic "0.3.11"]
                  [clj-tcp "1.0.1"]
                  [com.cognitect/transit-clj "0.8.319"]
-                 [commons-net/commons-net "3.5"]
+                 [commons-net/commons-net "3.6"]
                  [me.raynes/fs "1.4.6"]
-                 [org.clojure/clojure "1.10.0"]
+                 [org.clojure/clojure "1.10.1"]
                  [org.clojure/data.json "0.2.7"]
                  [net.snca/kunekune "0.1.6"]
                  ; [clj-telnet "0.6.0"] using `lib`
