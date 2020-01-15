@@ -25,7 +25,7 @@
     (cl-format *err* "! Setup timer playlist for ~A~%" (tf/encode duration))
     (let [cache (cache/read-cache)
           t (timer/make cache)
-          pl (timer/ss t duration)]
+          pl (timer/generate t duration)]
       (cl-format *err*
                  "? ~A (~:D songs)~%~%"
                  (tf/encode (util/sum-duration pl))

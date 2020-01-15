@@ -26,7 +26,7 @@
        (filter #(duration-match t duration (:duration %)))
        sample))
 
-(defn smart-search [t duration]
+(defn generate [t duration]
   (binding [*out* *err*]
     (let [prg-bar (pr/progress-bar (int duration))]
       (loop [dur duration result [] retried 0]
