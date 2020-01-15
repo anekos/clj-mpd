@@ -1,21 +1,23 @@
 
-SRCS := $(wildcard $(test/*.clj)) $(wildcard $(src/*.clj)) project.clj
+
+SRCROOTS = src dev test
+SRCS = $(foreach root, $(SRCROOTS), $(shell find $(root) -name '*.clj')) project.clj
+
 JAR := target/mpd-timer-0.1.0-SNAPSHOT-standalone.jar
 
-
-target/mpd-timer: $(JAR)
+mpd-timer: $(JAR)
 	/usr/lib/jvm/default-runtime/jre/bin/native-image \
 		--no-server \
-		--report-unsupported-elements-at-runtime \
-		--enable-all-security-services \
-		-H:Name=./target/mpd-timer \
-		-H:+ReportExceptionStackTraces \
 		--no-fallback \
+		--report-unsupported-elements-at-runtime \
+		-H:Name=mpd-timer \
+		-H:+ReportExceptionStackTraces \
 		-jar $(JAR)
 
-mpd-timer: $(JAR)
-	cat res/kick.sh $(JAR) > mpd-timer
-	chmod +x mpd-timer
+# mpd-timer: $(JAR)
+# 	cat res/kick.sh $(JAR) > mpd-timer
+# 	chmod +x mpd-timer
 
-$(JAR): $(SRC)
+$(JAR): $(SRCS)
+	lein clean
 	lein uberjar
