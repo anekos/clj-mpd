@@ -1,5 +1,6 @@
 (ns mpd.timer
-  (:require [mpd.util :refer [percentile retry sample vector-or-nil]]))
+  (:require [mpd.util :refer [percentile sample]]
+            [progrock.core :as pr]))
 
 
 (declare random-find split-search any-search)
@@ -20,28 +21,28 @@
        entry
        (+ target tolerance))))
 
-(defn smart-search [t duration]
-  ((if (< (:long-time t) duration)
-     split-search
-     any-search)
-   t duration))
-
-(defn any-search [t duration]
-  ((sample [(comp vector-or-nil random-find)
-            split-search])
-   t duration))
-
 (defn random-find [t duration]
   (->> (:entries t)
        (filter #(duration-match t duration (:duration %)))
        sample))
 
-(defn split-search [t duration]
-  (when-let [fst (retry
-                   10
-                   #(let [fst (rand (min (:long-time t) duration))]
-                      (random-find t fst)))]
-    (let [remain (- duration
-                    (:duration fst))]
-      (when-let [remain (smart-search t remain)]
-        (cons fst remain)))))
+(defn smart-search [t duration]
+  (binding [*out* *err*]
+    (let [prg-bar (pr/progress-bar (int duration))]
+      (loop [dur duration result [] retried 0]
+        (pr/print (pr/tick prg-bar (int (- duration
+                                           dur))))
+        (if (< dur (:long-time t))
+          (do (pr/print (pr/tick prg-bar duration))
+              (println)
+              (cons (random-find t dur)
+                    result))
+          (let [next-dur (rand (min (:long-time t)
+                                    dur))
+                found (random-find t next-dur)]
+            (if found
+              (recur (- dur
+                        (:duration found))
+                     (cons found result)
+                     0)
+              (recur dur result (inc retried)))))))))

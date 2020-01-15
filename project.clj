@@ -10,10 +10,11 @@
                  [clj-tcp "1.0.1"]
                  [com.cognitect/transit-clj "0.8.319"]
                  [commons-net/commons-net "3.6"]
+                 [net.snca/kunekune "0.1.6"]
                  [me.raynes/fs "1.4.6"]
                  [org.clojure/clojure "1.10.1"]
                  [org.clojure/data.json "0.2.7"]
-                 [net.snca/kunekune "0.1.6"]
+                 [progrock "0.1.2"]
                  ; [clj-telnet "0.6.0"] using `lib`
                  ]
   :source-paths ["src" "clj-telnet/src"]
