@@ -1,6 +1,7 @@
 (ns mpd.core
   (:gen-class)
-  (:require [clojure.pprint :refer [cl-format]]
+  (:require [clojure.data.json :as json]
+            [clojure.pprint :refer [cl-format]]
             [cli-matic.core :refer [run-cmd]]
             [mpd.cache :as cache]
             [mpd.client :as client]
@@ -14,7 +15,12 @@
   (client/with-mpd host port
     (cache/update-cache)))
 
-(defn command-set [{duration :duration print-only :print play :play host :host port :port}]
+(defn- print-entry [entry print-meta]
+  (if print-meta
+    (println (json/write-str entry))
+    (println (:path entry))))
+
+(defn command-set [{duration :duration print-only :print play :play meta :meta host :host port :port :as all}]
   (let [duration (tf/decode duration)]
     (cl-format *err* "! Setup timer playlist for ~A~%" (tf/encode duration))
     (let [cache (cache/read-cache)
@@ -25,12 +31,11 @@
                  (tf/encode (util/sum-duration pl))
                  (count pl))
       (if print-only
-        (doseq [{path :path} pl]
-          (println path))
+        (doall (map #(print-entry % meta) pl))
         (client/with-mpd host port
           (cmd/clear)
-          (doseq [{path :path} pl]
-            (println path)
+          (doseq [{path :path :as all} pl]
+            (print-entry all meta)
             (cmd/add path))
           (when play
             (cmd/play))))
@@ -60,7 +65,8 @@
                   :short       "s"
                   :description "Setup playlist for timer"
                   :opts        [{:short 0 :option "duration" :as "Duration in seconds" :type :string}
-                                {:short "p" :option "print" :as "Print path only" :type :with-flag :default false}
+                                {:option "print" :short "p" :as "Print path only" :type :with-flag :default false}
+                                {:option "meta" :as "Print meta" :type :with-flag :default false}
                                 {:option "play" :as "Play after set playlist" :type :with-flag :default true}]
                   :runs        command-set}]})
 
