@@ -1,7 +1,7 @@
 
 SRCS := $(wildcard $(test/*.clj)) $(wildcard $(src/*.clj)) project.clj
 
-JAR := target/mpd-0.1.0-SNAPSHOT-standalone.jar
+JAR := target/mpd-timer-0.1.0-SNAPSHOT-standalone.jar
 
 
 mpd-timer: $(JAR)
