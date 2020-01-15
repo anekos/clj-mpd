@@ -28,9 +28,9 @@
 
 (defn connect [host port]
   (binding [*conn* (telnet/get-telnet host port)]
-    (cl-format *err* "? Connecting~%")
+    ; (cl-format *err* "? Connecting~%")
     (read-banner)
-    (cl-format *err* "? Connected~%")
+    ; (cl-format *err* "? Connected~%")
     *conn*))
 
 (defn wait-ok []
