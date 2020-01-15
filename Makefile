@@ -1,7 +1,7 @@
 
 
 SRCROOTS = src dev test
-SOURCES = $(foreach root, $(SRCROOTS), $(shell find $(root) -name '*.clj'))
+SRCS = $(foreach root, $(SRCROOTS), $(shell find $(root) -name '*.clj'))
 
 JAR := target/mpd-timer-0.1.0-SNAPSHOT-standalone.jar
 
