@@ -14,7 +14,7 @@
   (client/with-mpd host port
     (cache/update-cache)))
 
-(defn command-set [{duration :duration print-only :print host :host port :port}]
+(defn command-set [{duration :duration print-only :print play :play host :host port :port}]
   (let [duration (tf/decode duration)]
     (cl-format *err* "! Setup timer playlist for ~A~%" (tf/encode duration))
     (let [cache (cache/read-cache)
@@ -32,7 +32,8 @@
           (doseq [{path :path} pl]
             (println path)
             (cmd/add path))
-          (cmd/play)))
+          (when play
+            (cmd/play))))
       nil)))
 
 
@@ -59,7 +60,8 @@
                   :short       "s"
                   :description "Setup playlist for timer"
                   :opts        [{:short 0 :option "duration" :as "Duration in seconds" :type :string}
-                                {:short "p" :option "print" :as "Print path only" :type :with-flag :default false}]
+                                {:short "p" :option "print" :as "Print path only" :type :with-flag :default false}
+                                {:option "play" :as "Play after set playlist" :type :with-flag :default true}]
                   :runs        command-set}]})
 
 (defn -main
