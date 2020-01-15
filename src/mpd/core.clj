@@ -20,7 +20,7 @@
     (println (json/write-str entry))
     (println (:path entry))))
 
-(defn command-set [{duration :duration print-only :print play :play meta :meta host :host port :port :as all}]
+(defn command-set [{:keys [duration print play meta host port]}]
   (let [duration (tf/decode duration)]
     (cl-format *err* "! Setup timer playlist for ~A~%" (tf/encode duration))
     (let [cache (cache/read-cache)
@@ -30,7 +30,7 @@
                  "? ~A (~:D songs)~%~%"
                  (tf/encode (util/sum-duration pl))
                  (count pl))
-      (if print-only
+      (if print
         (doall (map #(print-entry % meta) pl))
         (client/with-mpd host port
           (cmd/clear)
