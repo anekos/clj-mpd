@@ -30,7 +30,7 @@
     r))
 
 (defn- walk- [path]
-  (cl-format *err* "! read: ~A~%" path)
+  (cl-format *err* "! read: ~A~%" (if (empty? path) "/" path))
   (let [entries (lsinfo path)
         files (filter #(and :duration (= (:type %) "file")) entries)
         dirs (->> entries
