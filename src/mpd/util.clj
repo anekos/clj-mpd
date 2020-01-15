@@ -6,8 +6,7 @@
     (when (< 0 n)
       (if-let [r (f)]
         r
-        (do (println 'retry)
-            (recur (dec n)))))))
+        (recur (dec n))))))
 
 (defn percentile [pct entries]
   (let [l (count entries)]
