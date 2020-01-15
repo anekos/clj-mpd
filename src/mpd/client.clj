@@ -33,16 +33,29 @@
     (cl-format *err* "? Connected~%")
     *conn*))
 
+(defn wait-ok []
+  (telnet/read-until-or *conn* [#"OK\n"]))
+
 (defn read-response []
-  (let [r (telnet/read-until-or *conn* [#"OK\n" #"ACK .*\n"])
+  ;(cl-format *err* "? read-response~%")
+  (let [r (telnet/read-until-or *conn* [#"\nOK\n"])
         r (str/split r #"\n")]
+    ;(cl-format *err* "? response = ~A~%" r)
     (take (- (count r) 1)
           r)))
 
 (defn command [cmd & args]
+  ;(cl-format *err* "? command: ~A - ~A~%" cmd args)
   (telnet/write *conn*
                 (str
                  cmd
                  " "
-                 (str/join " " (map quote args))))
+                 (str/join " " (map quote args)))))
+
+(defn command-read [& args]
+  (apply command args)
   (read-response))
+
+(defn command-wait [& args]
+  (apply command args)
+  (wait-ok))

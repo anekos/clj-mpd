@@ -25,7 +25,7 @@
         (conj result item)))))
 
 (defn lsinfo [path]
-  (let [s (client/command "lsinfo" path)
+  (let [s (client/command-read "lsinfo" path)
         r (parse-lsinfo s)]
     r))
 
@@ -47,10 +47,10 @@
 
 
 (defn add [uri]
-  (client/command "add" uri))
+  (client/command-wait "add" uri))
 
 (defn clear []
-  (client/command "clear"))
+  (client/command-wait "clear"))
 
 (defn play []
-  (client/command "play"))
+  (client/command-wait "play"))
