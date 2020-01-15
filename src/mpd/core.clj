@@ -14,7 +14,7 @@
   (client/with-mpd
     (cache/update-cache)))
 
-(defn command-timer [{duration :duration print-only :print}]
+(defn command-set [{duration :duration print-only :print}]
   (let [duration (tf/decode duration)]
     (cl-format *err* "! Setup timer playlist for ~A~%" (tf/encode duration))
     (let [cache (cache/read-cache)
@@ -49,11 +49,11 @@
    :commands    [{:command     "update"
                   :description "Update cache"
                   :runs        command-update}
-                 {:command     "timer"
+                 {:command     "set"
                   :description "Setup playlist for timer"
                   :opts        [{:short 0 :option "duration" :as "Duration in seconds" :type :string}
                                 {:short "p" :option "print" :as "Print path only" :type :with-flag :default false}]
-                  :runs        command-timer}]})
+                  :runs        command-set}]})
 
 (defn -main
   [& args]
