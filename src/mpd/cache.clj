@@ -1,9 +1,11 @@
 (ns mpd.cache
-  (:require [clojure.java.io :refer [file]]
+  (:require [cheshire.core :as chs]
+            [clojure.java.io :refer [file]]
             [clojure.pprint :refer [cl-format]]
-            [cheshire.core :as chs]
             [me.raynes.fs :as fs]
-            [mpd.client.command :as client-command]))
+            [mpd.client.command :as client-command]
+            [mpd.time-format :as tf]
+            [mpd.util :refer [sum-duration]]))
 
 
 (def ^:dynamic *cache-file* (file (fs/home) ".local/var/cache/clj-mpd/walked.json"))
@@ -18,11 +20,9 @@
     (let [cache (-> *cache-file* slurp (chs/parse-string keyword))
           cache (filter :duration cache)]
       (cl-format *err*
-                 "? Library duration: ~:D sec~%"
-                 (->> cache
-                      (map :duration)
-                      (reduce +)
-                      Math/ceil))
+                 "? Library duration: ~A~%"
+                 (tf/encode
+                   (int (sum-duration cache))))
       cache)))
 
 (defn update-cache []

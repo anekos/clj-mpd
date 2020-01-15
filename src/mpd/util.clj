@@ -1,4 +1,4 @@
-(ns util)
+(ns mpd.util)
 
 
 (defn retry [n f]
@@ -19,6 +19,12 @@
   (when-not (empty? coll)
     (let [l (count coll)]
       (nth coll (rand-int l)))))
+
+(defn sum-duration [entries]
+  (->> entries
+       (map :duration)
+       (reduce +)
+       Math/ceil))
 
 (defn vector-or-nil [item]
   (when item

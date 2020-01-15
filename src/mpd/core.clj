@@ -2,10 +2,12 @@
   (:gen-class)
   (:require [clojure.pprint :refer [cl-format]]
             [cli-matic.core :refer [run-cmd]]
+            [mpd.cache :as cache]
             [mpd.client :as client]
             [mpd.client.command :as cmd]
+            [mpd.time-format :as tf]
             [mpd.timer :as timer]
-            [mpd.cache :as cache]))
+            [mpd.util :as util]))
 
 
 (defn command-update [{}]
@@ -13,10 +15,14 @@
     (cache/update-cache)))
 
 (defn command-timer [{duration :duration print-only :print}]
-  (cl-format *err* "! Setup timer playlist for ~A seconds~%" duration)
+  (cl-format *err* "! Setup timer playlist for ~A~%" (tf/encode duration))
   (let [cache (cache/read-cache)
         t (timer/make cache)
         pl (timer/smart-search t duration)]
+    (cl-format *err*
+               "? ~:D seconds (~:D songs)~%~%"
+               (util/sum-duration pl)
+               (count pl))
     (if print-only
       (doseq [{path :path} pl]
         (println path))
