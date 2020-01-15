@@ -5,17 +5,18 @@
 
 
 (defn- unit-power [u]
-  (condp = u
-    "d" (* (unit-power "h") 24)
-    "h" (* (unit-power "m") 60)
-    "m" (* (unit-power "s") 60)
-    "s" 1
-    nil (unit-power "m")))
+  (if u
+    (condp = (first (string/upper-case u))
+      \D (* (unit-power "hours") 24)
+      \H (* (unit-power "minutes") 60)
+      \M (* (unit-power "seconds") 60)
+      \S 1)
+    (unit-power "minutes")))
 
-(def units [["d" (* 24 60 60)]
-            ["h" (* 60 60)]
-            ["m" 60]
-            ["s" 1]])
+(def units [["days" (* 24 60 60)]
+            ["hours" (* 60 60)]
+            ["minutes" 60]
+            ["seconds" 1]])
 
 (defn decode [s]
   (let [m (re-matcher #"(\d+)([dhms])?"
@@ -30,10 +31,13 @@
         result))))
 
 (defn encode [s]
-  (loop [s s [[u p] & units] units result ""]
+  (loop [s s [[u p] & units] units result []]
     (if u
       (let [q (int (/ s p)) r (mod s p)]
         (if (< 0 q)
-          (recur r units (cl-format nil "~A~D~A" result q u))
+          (let [u (if (= q 1)
+                    (subs u 0 (dec (count u)))
+                    u)]
+            (recur r units (conj result (cl-format nil "~A ~D" q u))))
           (recur r units result)))
-      result)))
+      (string/join " " result))))
