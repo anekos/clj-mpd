@@ -1,5 +1,5 @@
 (ns mpd.timer
-  (:require [util :refer [percentile retry sample vector-or-nil]]))
+  (:require [mpd.util :refer [percentile retry sample vector-or-nil]]))
 
 
 (declare random-find split-search any-search)
