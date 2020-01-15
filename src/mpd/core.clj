@@ -15,24 +15,25 @@
     (cache/update-cache)))
 
 (defn command-timer [{duration :duration print-only :print}]
-  (cl-format *err* "! Setup timer playlist for ~A~%" (tf/encode duration))
-  (let [cache (cache/read-cache)
-        t (timer/make cache)
-        pl (timer/smart-search t duration)]
-    (cl-format *err*
-               "? ~:D seconds (~:D songs)~%~%"
-               (util/sum-duration pl)
-               (count pl))
-    (if print-only
-      (doseq [{path :path} pl]
-        (println path))
-      (client/with-mpd
-        (cmd/clear)
+  (let [duration (tf/decode duration)]
+    (cl-format *err* "! Setup timer playlist for ~A~%" (tf/encode duration))
+    (let [cache (cache/read-cache)
+          t (timer/make cache)
+          pl (timer/smart-search t duration)]
+      (cl-format *err*
+                 "? ~A (~:D songs)~%~%"
+                 (tf/encode (util/sum-duration pl))
+                 (count pl))
+      (if print-only
         (doseq [{path :path} pl]
-          (println path)
-          (cmd/add path))
-        (cmd/play)))
-    nil))
+          (println path))
+        (client/with-mpd
+          (cmd/clear)
+          (doseq [{path :path} pl]
+            (println path)
+            (cmd/add path))
+          (cmd/play)))
+      nil)))
 
 
 
