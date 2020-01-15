@@ -51,7 +51,7 @@
                   :runs        command-update}
                  {:command     "timer"
                   :description "Setup playlist for timer"
-                  :opts        [{:short 0 :option "duration" :as "Duration in seconds" :type :int}
+                  :opts        [{:short 0 :option "duration" :as "Duration in seconds" :type :string}
                                 {:short "p" :option "print" :as "Print path only" :type :with-flag :default false}]
                   :runs        command-timer}]})
 
