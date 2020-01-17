@@ -95,4 +95,18 @@
            "8 days 2 hours 3 minutes 4 seconds"))
 
     (is (= (encode (decode "30"))
-           "30 minutes"))))
+           "30 minutes")))
+
+ (testing "encode - short"
+    (is (= (encode (decode "1h3m") true)
+           "1h3m"))
+
+    (is (= (encode (decode "2h3m4s") true)
+           "2h3m4s")))
+
+ (testing "encode - fix"
+    (is (= (encode (decode "1h3m") true true)
+           "00d01h03m00s"))
+
+    (is (= (encode (decode "2h3m4s") true true)
+           "00d02h03m04s"))))

@@ -13,10 +13,10 @@
       \S 1)
     (unit-power "minutes")))
 
-(def units [["days" (* 24 60 60)]
-            ["hours" (* 60 60)]
-            ["minutes" 60]
-            ["seconds" 1]])
+(def units [[[" days" "d"]  (* 24 60 60)]
+            [[" hours" "h"] (* 60 60)]
+            [[" minutes" "m"] 60]
+            [[" seconds" "s"] 1]])
 
 (defn decode [s]
   (let [m (re-matcher #"(\d+)([dhms])?"
@@ -30,14 +30,17 @@
             result))
         result))))
 
-(defn encode [s]
-  (loop [s s [[u p] & units] units result []]
+(defn encode [s & [short fix]]
+  (loop [s s
+         [[u p] & units] (map (fn [[[l s] p]] [(if short s l) p]) units)
+         result []]
     (if u
       (let [q (int (/ s p)) r (mod s p)]
-        (if (< 0 q)
-          (let [u (if (= q 1)
+        (if (or fix (< 0 q))
+          (let [u (if (and (not short) (= q 1))
                     (subs u 0 (dec (count u)))
                     u)]
-            (recur r units (conj result (cl-format nil "~A ~D" q u))))
+            (recur r units (conj result
+                                 (cl-format nil (if fix "~2,'0D~A" "~D~A") q u))))
           (recur r units result)))
-      (string/join " " result))))
+      (string/join (if short "" " ") result))))

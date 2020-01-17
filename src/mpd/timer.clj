@@ -1,6 +1,8 @@
 (ns mpd.timer
-  (:require [mpd.util :refer [percentile sample]]
-            [progrock.core :as pr]))
+  (:require [clojure.pprint :refer [cl-format]]
+            [mpd.util :refer [percentile sample]]
+            [progrock.core :as pr]
+            [mpd.time-format :as tf]))
 
 
 (declare random-find split-search any-search)
@@ -26,14 +28,20 @@
        (filter #(duration-match t duration (:duration %)))
        sample))
 
+(defn- print-bar [bar]
+  (pr/print bar {:format (cl-format nil
+                                    "~A/~A :percent% [:bar] ETA: :remaining"
+                                    (tf/encode (:progress bar) true true)
+                                    (tf/encode (:total bar) true true))}))
+
 (defn generate [t duration]
   (binding [*out* *err*]
     (let [prg-bar (pr/progress-bar (int duration))]
       (loop [dur duration result [] retried 0]
-        (pr/print (pr/tick prg-bar (int (- duration
+        (print-bar (pr/tick prg-bar (int (- duration
                                            dur))))
         (if (< dur (:long-time t))
-          (do (pr/print (pr/tick prg-bar duration))
+          (do (print-bar (pr/tick prg-bar duration))
               (println)
               (cons (random-find t dur)
                     result))
