@@ -1,14 +1,27 @@
-# mpd
-
-A Clojure library designed to ... well, that part is up to you.
+# Silence is your alarm.
 
 ## Usage
 
-FIXME
+### Initialize
+
+Load MPD music library to cache.
+
+```
+$ mpd-timer update
+```
+
+### Set the timer
+
+Set the timer for 2 hours 30 minutes.
+(= Setup MPD playlist and play it)
+
+```
+$ mpd-timer set 2h30m
+```
 
 ## License
 
-Copyright © 2020 FIXME
+Copyright © 2020 anekos
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at
