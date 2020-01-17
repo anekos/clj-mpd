@@ -105,8 +105,21 @@
            "2h3m4s")))
 
  (testing "encode - fix"
+    (is (= (encode (decode "1h3m") false true)
+           "00 days 01 hour 03 minutes 00 seconds"))
+
+    (is (= (encode (decode "2h3m4s") false true)
+           "00 days 02 hours 03 minutes 04 seconds")))
+
+(testing "encode - short and fix"
+    (is (= (encode (decode "1d2h3m4s") true true)
+           "01d02h03m04s"))
+
     (is (= (encode (decode "1h3m") true true)
-           "00d01h03m00s"))
+           "   01h03m00s"))
+
+    (is (= (encode (decode "2h4s") true true)
+           "   02h00m04s"))
 
     (is (= (encode (decode "2h3m4s") true true)
-           "00d02h03m04s"))))
+           "   02h03m04s"))))

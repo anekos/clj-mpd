@@ -43,4 +43,10 @@
             (recur r units (conj result
                                  (cl-format nil (if fix "~2,'0D~A" "~D~A") q u))))
           (recur r units result)))
-      (string/join (if short "" " ") result))))
+      (let [s (string/join (if short "" " ") result)]
+        (if (and short fix)
+          (let [found (re-find #"^(00[dhms])+" s)
+                zero-len (-> found first count)
+                prefix (apply str (repeat zero-len " "))]
+            (str prefix (subs s zero-len)))
+          s)))))
