@@ -1,32 +1,25 @@
 (ns mpd.timer
   (:require [clojure.pprint :refer [cl-format]]
-            [mpd.util :refer [percentile sample]]
-            [progrock.core :as pr]
-            [mpd.time-format :as tf]))
+            [mpd.cache :as cache]
+            [mpd.time-format :as tf]
+            [mpd.util :refer [sample]]
+            [progrock.core :as pr]))
 
 
 (declare random-find split-search any-search)
 
 (defn make
-  ([entries]
-   (make entries 1.0))
-  ([entries tolerance]
-   {:entries entries
-    :long-time (:duration (percentile 90 entries))
+  ([]
+   (make 1.0))
+  ([tolerance]
+   {:long-time (cache/duration-pct 90)
     :tolerance tolerance}))
 
-(defn duration-match
-  "`target` is duration, `entry` is duration"
-  [t target entry]
-  (let [tolerance (:tolerance t)]
-    (< (- target tolerance)
-       entry
-       (+ target tolerance))))
-
-(defn random-find [t duration]
-  (->> (:entries t)
-       (filter #(duration-match t duration (:duration %)))
-       sample))
+(defn random-find [{:keys [tolerance]} duration]
+  (sample
+   (cache/fetch-in-range
+    (- duration tolerance)
+    (+ duration tolerance))))
 
 (defn- print-bar [bar]
   (pr/print bar {:format (cl-format nil
