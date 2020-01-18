@@ -28,14 +28,6 @@
         first
         :duration)))
 
-(defn init-db []
-  (jdbc/execute!
-   (db)
-   "CREATE TABLE IF NOT EXISTS songs (path varchar primary key, duration real, json varchar)")
-  (jdbc/execute!
-   (db)
-   "CREATE INDEX IF NOT EXISTS duration_index ON songs (duration)"))
-
 (defn fetch-in-range [from to]
   (map
    (comp #(json/read-str % :key-fn keyword) :json)
@@ -51,7 +43,6 @@
 
 (defn update-cache []
   (let [entries (client-command/walk "")]
-    (init-db)
     (write-cache entries)))
 
 (defn write-cache [entries]
@@ -60,7 +51,9 @@
   (jdbc/db-transaction*
    (db)
    (fn [db]
-     (jdbc/execute! db ["DELETE FROM songs"])
+     (jdbc/execute! db "DELETE FROM songs")
+     (jdbc/execute! db "CREATE TABLE IF NOT EXISTS songs (path varchar primary key, duration real, json varchar)")
+     (jdbc/execute! db "CREATE INDEX IF NOT EXISTS duration_index ON songs (duration)")
      (jdbc/insert-multi!
       db
       :songs
