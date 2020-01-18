@@ -51,9 +51,9 @@
   (jdbc/db-transaction*
    (db)
    (fn [db]
-     (jdbc/execute! db "DELETE FROM songs")
      (jdbc/execute! db "CREATE TABLE IF NOT EXISTS songs (path varchar primary key, duration real, json varchar)")
      (jdbc/execute! db "CREATE INDEX IF NOT EXISTS duration_index ON songs (duration)")
+     (jdbc/execute! db "DELETE FROM songs")
      (jdbc/insert-multi!
       db
       :songs
