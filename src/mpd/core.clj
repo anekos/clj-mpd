@@ -71,7 +71,7 @@
                  {:command     "set"
                   :short       "s"
                   :description "Setup playlist for timer"
-                  :opts        [{:short 0 :option "duration" :as "Duration in seconds" :type :string :default :present :spec ::TIME-FORMAT}
+                  :opts        [{:short 0 :option "duration" :as "Duration (e.g. \"1day2hours3mins4secs\")" :type :string :default :present :spec ::TIME-FORMAT}
                                 {:option "print" :short "p" :as "Print path only" :type :with-flag :default false}
                                 {:option "meta" :as "Print meta" :type :with-flag :default false}
                                 {:option "play" :as "Play after set playlist" :type :with-flag :default true}]
