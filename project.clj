@@ -7,11 +7,13 @@
   :dependencies [[cli-matic "0.3.11"]
                  [clj-tcp "1.0.1"]
                  [commons-net/commons-net "3.6"]
+                 [expound "0.8.0"]
                  [net.snca/kunekune "0.1.6"]
                  [me.raynes/fs "1.4.6"]
                  [org.clojure/clojure "1.10.1"]
                  [org.clojure/data.json "0.2.7"]
                  [org.clojure/java.jdbc "0.7.11"]
+                 [org.clojure/spec.alpha "0.1.143"]
                  [org.xerial/sqlite-jdbc "3.30.1"]
                  [progrock "0.1.2"]
                  ; [clj-telnet "0.6.0"] using `lib`

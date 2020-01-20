@@ -2,7 +2,9 @@
   (:gen-class)
   (:require [clojure.data.json :as json]
             [clojure.pprint :refer [cl-format]]
+            [clojure.spec.alpha :as spec]
             [cli-matic.core :refer [run-cmd]]
+            [expound.alpha :as expound]
             [mpd.cache :as cache]
             [mpd.client :as client]
             [mpd.client.command :as cmd]
@@ -40,6 +42,13 @@
       nil)))
 
 
+(expound/def ::TIME-FORMAT #(re-matches #"^(\d+|(\d+\s*([dhms][a-zA-Z]*)?\s*)+)$" %) "e.g.
+  123
+  2 minutes 3 seconds
+  1 hour 2 minutes 3 seconds
+  1 day 2 hours 2 minutes 3 seconds
+  2d 3h 4m 5s
+  3d4h5m6s")
 
 (def cli-options
   {:app {:command     "mpd-timer"
@@ -62,7 +71,7 @@
                  {:command     "set"
                   :short       "s"
                   :description "Setup playlist for timer"
-                  :opts        [{:short 0 :option "duration" :as "Duration in seconds" :type :string :default :present}
+                  :opts        [{:short 0 :option "duration" :as "Duration in seconds" :type :string :default :present :spec ::TIME-FORMAT}
                                 {:option "print" :short "p" :as "Print path only" :type :with-flag :default false}
                                 {:option "meta" :as "Print meta" :type :with-flag :default false}
                                 {:option "play" :as "Play after set playlist" :type :with-flag :default true}]
