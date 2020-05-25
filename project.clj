@@ -11,9 +11,9 @@
                  [me.raynes/fs "1.4.6"]
                  [net.snca/kunekune "0.1.6"]
                  [org.clojure/clojure "1.10.1"]
-                 [org.clojure/data.json "0.2.7"]
+                 [org.clojure/data.json "1.0.0"]
                  [org.clojure/java.jdbc "0.7.11"]
-                 [org.xerial/sqlite-jdbc "3.30.1"]
+                 [org.xerial/sqlite-jdbc "3.31.1"]
                  [progrock "0.1.2"]
                  [tick "0.4.23-alpha"]
                  ; [clj-telnet "0.6.0"] using `lib`
@@ -21,7 +21,7 @@
   :source-paths ["src" "clj-telnet/src"]
   :main mpd.core
   :profiles {:dev
-             {:dependencies [[org.clojure/tools.namespace "0.3.1"]]
+             {:dependencies [[org.clojure/tools.namespace "1.0.0"]]
               :source-paths ["src" "test" "clj-telnet/src" "dev"]
               :aot []
               :repl-options {:init-ns user}}
