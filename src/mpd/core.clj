@@ -23,32 +23,38 @@
     (println (:path entry))))
 
 (defn command-set [{:keys [duration print play meta host port]}]
-  (let [duration (tf/decode duration)]
-    (cl-format *err* "! Setup timer playlist for ~A~%" (tf/encode duration))
-    (let [pl (timer/generate (timer/make) duration)]
-      (cl-format *err*
-                 "? ~A (~:D songs)~%~%"
-                 (tf/encode (util/sum-duration pl))
-                 (count pl))
-      (if print
-        (doall (map #(print-entry % meta) pl))
-        (client/with-mpd host port
-          (cmd/clear)
-          (doseq [{path :path :as all} pl]
-            (print-entry all meta)
-            (cmd/add path))
-          (when play
-            (cmd/play))))
-      nil)))
+  (try
+    (let [duration (tf/decode duration)]
+      (cl-format *err* "! Setup timer playlist for ~A~%" (tf/encode duration))
+      (let [pl (timer/generate (timer/make) duration)]
+        (cl-format *err*
+                   "? ~A (~:D songs)~%~%"
+                   (tf/encode (util/sum-duration pl))
+                   (count pl))
+        (if print
+          (doall (map #(print-entry % meta) pl))
+          (client/with-mpd host port
+            (cmd/clear)
+            (doseq [{path :path :as all} pl]
+              (print-entry all meta)
+              (cmd/add path))
+            (when play
+              (cmd/play))))
+        nil))
+    (catch Exception e
+      (println (.getMessage e)))))
 
 
-(expound/def ::TIME-FORMAT #(re-matches #"^(\d+|(\d+\s*([dhms][a-zA-Z]*)?\s*)+)$" %) "e.g.
+(expound/def ::TIME-FORMAT #(re-matches #"^(\d{1,2}:\d{1,2}|\d+|(\d+\s*([dhms][a-zA-Z]*)?\s*)+)$" %) "
+Duration or Time
+e.g.
   123
   2 minutes 3 seconds
   1 hour 2 minutes 3 seconds
   1 day 2 hours 2 minutes 3 seconds
   2d 3h 4m 5s
-  3d4h5m6s")
+  3d4h5m6s
+  12:30")
 
 (def cli-options
   {:app {:command     "mpd-timer"
@@ -71,7 +77,7 @@
                  {:command     "set"
                   :short       "s"
                   :description "Setup playlist for timer"
-                  :opts        [{:short 0 :option "duration" :as "Duration (e.g. \"1day2hours3mins4secs\")" :type :string :default :present :spec ::TIME-FORMAT}
+                  :opts        [{:short 0 :option "duration" :as "Duration or Time(e.g. \"1day2hours3mins4secs\" or \"14:50\")" :type :string :default :present :spec ::TIME-FORMAT}
                                 {:option "print" :short "p" :as "Print path only" :type :with-flag :default false}
                                 {:option "meta" :as "Print meta" :type :with-flag :default false}
                                 {:option "play" :as "Play after set playlist" :type :with-flag :default true}]

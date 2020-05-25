@@ -1,6 +1,10 @@
 (ns mpd.time-format
+  (:import java.time.Duration
+           java.time.LocalTime
+           java.time.format.DateTimeFormatter)
   (:require [clojure.pprint :refer [cl-format]]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [tick.alpha.api :as tk]))
 
 
 
@@ -18,7 +22,20 @@
             [[" minutes" "m"] 60]
             [[" seconds" "s"] 1]])
 
-(defn decode [s]
+(defn decode-at [s]
+  (when (re-matches #"\d{1,2}:\d{1,2}" s)
+    (let [fmt (DateTimeFormatter/ofPattern "H:m")
+          at (LocalTime/from (.parse fmt s))
+          now (java.time.LocalTime/now)
+          duration (Duration/between now at)
+          result (.getSeconds duration)]
+      (when (<= result 0)
+        (throw (Exception. "It's a past")))
+      result)))
+
+(defn decode-duration
+  "Returns the number of seconds"
+  [s]
   (let [m (re-matcher #"(\d+)([dhms])?"
                       (string/replace s #"\s+" ""))]
     (loop [[_ n u] (re-find m) result 0]
@@ -29,6 +46,12 @@
                (unit-power u))
             result))
         result))))
+
+(defn decode
+  "Returns the number of seconds"
+  [s]
+  (or (decode-at s)
+      (decode-duration s)))
 
 (defn encode [s & [short fix]]
   (loop [s s
